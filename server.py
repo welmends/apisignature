@@ -26,13 +26,24 @@ def process():
     file_bytes = np.asarray(bytearray(image_bytes.read()), dtype=np.uint8)
     image = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
     image_processed = sbr.process_signature(image)
-    cv.imwrite('/Users/well/Desktop/img.png', image_processed)
+    retval, buffer = cv.imencode('.png', image_processed)
+    image_base64 = base64.b64encode(buffer).decode("utf-8")
+    return image_base64
+
+@app.route('/apisignature/process_view', methods=['POST'])
+def process():
+    global base64img
+    image_request = request.files['image']
+    image_bytes = io.BytesIO(image_request.read())
+    file_bytes = np.asarray(bytearray(image_bytes.read()), dtype=np.uint8)
+    image = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
+    image_processed = sbr.process_signature(image)
     retval, buffer = cv.imencode('.png', image_processed)
     image_base64 = base64.b64encode(buffer).decode("utf-8")
     base64img = image_base64
-    return 'http://{}:{}/apisignature/retrieve'.format(Config.HOST,Config.PORT)
+    return 'http://{}:{}/apisignature/view\n'.format(Config.HOST,Config.PORT)
 
-@app.route('/apisignature/retrieve', methods=['GET'])
+@app.route('/apisignature/view', methods=['GET'])
 def retrieve():
     global base64img
     html_1 = '<div><img src="data:image/png;base64, '
