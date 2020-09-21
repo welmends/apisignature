@@ -2,22 +2,18 @@ from config import Config
 from signature import SigBackRemoval
 import sys
 import json
-import flask
-from flask import request, jsonify, render_template
-from flask import Flask
+from flask import Flask,request, jsonify, render_template
 from flask_cors import CORS, cross_origin
-sys.path.append('templates')
 
 ### Flask Config ###
-app = flask.Flask(__name__)
-CORS(app)
+app = Flask(__name__)
 app.config['DEBUG'] = False
+CORS(app)
 
 ### Routes ###
-# http://localhost:3012
 @app.route('/', methods=['GET'], endpoint=Config.ENDPOINT)
 def apicovid19predict():
-    return "i'm alive"
+    return 'im alive'
 
 ### Main ###
 if __name__ == '__main__':
