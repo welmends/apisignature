@@ -2,9 +2,6 @@ import cv2 as cv
 import numpy as np
 
 class SigBackRemoval:
-    def __init__(self):
-        return
-
     def process_signature(self, img):
         img = cv.GaussianBlur(img,(5,5),0)
         img = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
