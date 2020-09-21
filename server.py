@@ -31,7 +31,7 @@ def process():
     return image_base64
 
 @app.route('/apisignature/process_view', methods=['POST'])
-def process():
+def process_view():
     global base64img
     image_request = request.files['image']
     image_bytes = io.BytesIO(image_request.read())
