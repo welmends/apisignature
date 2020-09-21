@@ -1,4 +1,6 @@
-# Signature background removal service
+# ApiSignature
+
+## Signature background removal service
 
 ## Routes:
 - /apisignature/process
@@ -10,11 +12,11 @@
 ### Process
 - Returns base64 processed signature
 ```shell
-curl http://host:port/process -X POST -F image=@/path/to/image
+curl http://host:port/apisignature/process -X POST -F image=@/path/to/image
 ```
 
 ### Process and View
 - Returns url to view processed signature
 ```shell
-curl http://host:port/process_view -X POST -F image=@/path/to/image
+curl http://host:port/apisignature/process_view -X POST -F image=@/path/to/image
 ```
