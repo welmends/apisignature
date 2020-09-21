@@ -1,6 +1,7 @@
 from config import Config
 from signature import SigBackRemoval
 import sys
+import threading
 import io
 import base64
 import cv2 as cv
@@ -12,6 +13,7 @@ sbr = SigBackRemoval()
 app = Flask(__name__)
 app.config['DEBUG'] = False
 base64img = None
+mutex = threading.Semaphore()
 
 ### Routes ###
 @app.route('/', methods=['GET'])
@@ -40,7 +42,9 @@ def process_view():
     image_processed = sbr.process_signature(image)
     retval, buffer = cv.imencode('.png', image_processed)
     image_base64 = base64.b64encode(buffer).decode("utf-8")
+    mutex.acquire()
     base64img = image_base64
+    mutex.release()
     return 'http://{}:{}/apisignature/view\n'.format(Config.HOST,Config.PORT)
 
 @app.route('/apisignature/view', methods=['GET'])
@@ -48,8 +52,10 @@ def retrieve():
     global base64img
     html_1 = '<div><img src="data:image/png;base64, '
     html_2 = ' " alt="signature.png"/></div>'
+    mutex.acquire()
     image_base64 = base64img
     base64img = None
+    mutex.release()
     if image_base64==None:
         return '<h1>No signature available</h1>'
     else:
