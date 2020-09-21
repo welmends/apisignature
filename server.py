@@ -1,34 +1,48 @@
 from config import Config
 from signature import SigBackRemoval
 import sys
-import json
 import io
+import base64
 import cv2 as cv
 import numpy as np
 from flask import Flask, request, jsonify, render_template
-from flask_cors import CORS, cross_origin
 
 ### Flask Config ###
 sbr = SigBackRemoval()
 app = Flask(__name__)
 app.config['DEBUG'] = False
-CORS(app)
+base64img = None
 
 ### Routes ###
 @app.route('/', methods=['GET'])
 def init():
     return '<h1>Service of signature background removal implemented with Flask</h1>'
 
-@app.route("/signature", methods=["POST"])
+@app.route('/apisignature/process', methods=['POST'])
 def process():
-    # Usage: curl http://localhost:9999/signature -X POST -F image=@/path/to/image
-    image_request = request.files["image"]
+    global base64img
+    image_request = request.files['image']
     image_bytes = io.BytesIO(image_request.read())
     file_bytes = np.asarray(bytearray(image_bytes.read()), dtype=np.uint8)
     image = cv.imdecode(file_bytes, cv.IMREAD_COLOR)
-    output = sbr.process_signature(image)
-    cv.imwrite("/Users/well/Desktop/img.png", output)
-    return 'Processed\n'
+    image_processed = sbr.process_signature(image)
+    cv.imwrite('/Users/well/Desktop/img.png', image_processed)
+    retval, buffer = cv.imencode('.png', image_processed)
+    image_base64 = base64.b64encode(buffer).decode("utf-8")
+    base64img = image_base64
+    return 'http://{}:{}/apisignature/retrieve'.format(Config.HOST,Config.PORT)
+
+@app.route('/apisignature/retrieve', methods=['GET'])
+def retrieve():
+    global base64img
+    html_1 = '<div><img src="data:image/png;base64, '
+    html_2 = ' " alt="signature.png"/></div>'
+    image_base64 = base64img
+    base64img = None
+    if image_base64==None:
+        return '<h1>No signature available</h1>'
+    else:
+        return html_1+image_base64+html_2
 
 ### Main ###
 if __name__ == '__main__':
