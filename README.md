@@ -1,22 +1,13 @@
-# ApiSignature
+# API Signature - Docker Deploy
 
-## Signature background removal service
-
-## Routes:
-- /apisignature/process
-- /apisignature/process_view
-- /apisignature/view
-
-## How to use:
-
-### Process
-- Returns base64 processed signature
-```shell
-curl http://host:port/apisignature/process -X POST -F image=@/path/to/image
+```
+docker-compose up -d --build
 ```
 
-### Process and View
-- Returns url to view processed signature
-```shell
-curl http://host:port/apisignature/process_view -X POST -F image=@/path/to/image
+```
+docker-compose down
+```
+
+```
+docker-compose down --volumes
 ```

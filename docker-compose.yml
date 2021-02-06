@@ -1,0 +1,11 @@
+version: "3.5"
+services:
+  api-signature:
+    container_name: apisignature-py
+    hostname: apisignature-py
+    build: ./apisignature-py
+    tty: true
+    ports:
+      - "9090:9090"
+    volumes:
+      - './apisignature-py:/home/code'
