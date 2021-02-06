@@ -1,4 +1,4 @@
-# API Signature - Docker Deploy
+# ApiSignature - Docker Deploy
 
 ```
 docker-compose up -d --build

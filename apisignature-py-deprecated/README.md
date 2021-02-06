@@ -1,4 +1,4 @@
-# ApiSignature
+# ApiSignature - Python implementation (Deprecated)
 
 ## Signature background removal service
 
